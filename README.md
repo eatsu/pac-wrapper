@@ -12,6 +12,9 @@ respectively.
 
 ## Installation
 
+The `pac-wrapper` package is available
+[in AUR](https://aur.archlinux.org/packages/pac-wrapper).
+
 To install from source, run `makepkg -si`.
 
 ## Usage
