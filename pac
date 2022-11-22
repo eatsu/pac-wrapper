@@ -5,7 +5,7 @@
 #
 set -ueo pipefail
 
-VERSION="1.0.0"
+VERSION="2.0.0"
 PACMAN="${PAC_PACMAN:-"pacman"}"
 
 if [[ "$PACMAN" == "pacman" ]] && (( EUID != 0 )); then
