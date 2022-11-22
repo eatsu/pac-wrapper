@@ -4,7 +4,7 @@ Pac is a simple pacman wrapper that provides intuitive syntax similar to
 `dnf`, `apt`, `zypper`, etc.
 
 With `pac` you don't need to memorize the non-intuitive options like
-`-Rs`, `-Ss`, `-Si`; you can just type `remove`, `search`, `info`,
+`-Rs`, `-Si`, `-Ss`; you can just type `remove`, `info`, `search`,
 respectively.
 
 > **Note**: Pac itself is not an AUR helper, though it can wrap an AUR helper
@@ -17,19 +17,18 @@ The `pac-wrapper` package is available
 
 To install from source, run `make install`.
 
-## Usage
+## Examples
 
-- To upgrade installed packages, run `pac`.
-- To install package `foo`, run `pac install foo` or `pac in foo`.
-- To remove package `foo`, run `pac remove foo` or `pac rm foo`.
-- To show information about package `foo` (whichever installed or not, or a
-  package group or not), run `pac info foo` or `pac if foo`.
-- To mark package `foo` as dependencies, run `pac mark --asdeps foo` or
-  `pac mark -d foo`.
-- To remove dependencies that are no longer required by any installed package,
-  run `pac autoremove`.
-- To list explicitly installed foreign packages (e.g. AUR packages), run
-  `pac list --explicit --foreign` or `pac ls -e -f`.
+Command | Description
+:-- | :--
+`pac` | Upgrade installed packages.
+`pac in foo` <br> `pac install foo` | Install package `foo` and its dependencies.
+`pac rm foo` <br> `pac remove foo` | Remove package `foo` and its dependencies.
+`pac if foo` <br> `pac info foo` | Show information about package `foo` (whichever installed or not, or a package group or not).
+`pac se foo` <br> `pac search foo` | Search package names and descriptions with keyword `foo`.
+`pac mark -d foo` <br> `pac mark --asdeps foo` | Mark package `foo` as dependencies.
+`pac arm` <br> `pac autoremove` | Remove dependencies that are no longer required by any installed package.
+`pac ls -e -f` <br> `pac list --explicit --foreign`| List explicitly installed foreign packages (e.g. AUR packages).
 
 Run `pac --help` for more information.
 
