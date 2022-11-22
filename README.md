@@ -7,6 +7,8 @@ With `pac` you don't need to memorize the non-intuitive options like
 `-Rs`, `-Si`, `-Ss`; you can just type `remove`, `info`, `search`,
 respectively.
 
+Pac also supports <kbd>Tab</kbd> completion in Bash and Zsh.
+
 > **Note**: Pac itself is not an AUR helper, though it can wrap an AUR helper
 > that supports pacman's options. See [Configuration](#configuration).
 
@@ -37,7 +39,8 @@ Run `pac --help` for more information.
 By default, `pac` wraps `pacman`. To wrap another pacman-compatible program,
 set the environment variable `PAC_PACMAN`.
 
-For example, to wrap `paru` instead of `pacman`, add
+For example, to wrap [`paru`](https://github.com/Morganamilo/paru) instead of
+`pacman`, add
 
 ```sh
 export PAC_PACMAN='paru'
