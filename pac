@@ -33,6 +33,11 @@ Commands:
   mark <package(s)>         Mark packages as explicitly installed
   list, ls                  List installed packages
 
+Command 'install' specific options:
+  --asdeps                  Install packages as dependencies
+  --needed                  Do not reinstall up to date packages
+  --overwrite <glob>        Overwrite conflicting files
+
 Command 'search' specific options:
   -i, --installed           Search only installed package names and descriptions
 

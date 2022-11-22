@@ -46,10 +46,6 @@ export PAC_PACMAN='paru'
 
 to your `~/.bash_profile` (or `$ZDOTDIR/.zshenv` for Zsh) and reload your shell.
 
-## TODO
-
-- Support Tab completion for bash and zsh.
-
 ## License
 
 MIT
