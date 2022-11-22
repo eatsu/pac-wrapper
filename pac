@@ -96,10 +96,10 @@ search() {
   for i in "$@"; do
     case "$i" in
       -i|--installed)
-        local installed="true"
+        local operation="-Q"
         ;;
       -*)
-        echo "pac search: unrecognized option '$i'"
+        echo "pac search: unrecognized option '$i'" 1>&2
         exit 1
         ;;
       *)
@@ -108,19 +108,15 @@ search() {
     esac
   done
 
-  if "${installed:-"false"}"; then
-    "$PACMAN" -Qs "${pkgs[@]}"
-  else
-    "$PACMAN" -Ss "${pkgs[@]}"
-  fi
+  "$PACMAN" "${operation:-"-S"}" -s "${pkgs[@]}"
 }
 
 info() {
   for i in "$@"; do
     # Add newline to -g to match -i
-    ("$PACMAN" -Qg "$i" 2> /dev/null && echo) || \
-    ("$PACMAN" -Qi "$i" 2> /dev/null) || \
-    ("$PACMAN" -Sg "$i" 2> /dev/null && echo) || \
+    ("$PACMAN" -Qg "$i" 2> /dev/null && echo) ||
+    ("$PACMAN" -Qi "$i" 2> /dev/null) ||
+    ("$PACMAN" -Sg "$i" 2> /dev/null && echo) ||
     ("$PACMAN" -Si "$i")
   done
 }
@@ -140,7 +136,7 @@ mark() {
         local opts+=("--asdeps")
         ;;
       -*)
-        echo "pac mark: unrecognized option '$i'"
+        echo "pac mark: unrecognized option '$i'" 1>&2
         exit 1
         ;;
       *)
@@ -168,7 +164,7 @@ list() {
         local opts+=("--foreign")
         ;;
       -*)
-        echo "pac list: unrecognized option '$i'"
+        echo "pac list: unrecognized option '$i'" 1>&2
         exit 1
         ;;
       *)
