@@ -1,5 +1,7 @@
 # Pac
 
+[![AUR package](https://img.shields.io/badge/AUR-pac--wrapper-blue?logo=archlinux)](https://aur.archlinux.org/packages/pac-wrapper)
+
 Pac is a simple pacman wrapper that provides intuitive syntax similar to
 `dnf`, `apt`, `zypper`, etc.
 
@@ -7,7 +9,7 @@ With `pac` you don't need to memorize the non-intuitive options like
 `-Rs`, `-Si`, `-Ss`; you can just type `remove`, `info`, `search`,
 respectively.
 
-Pac also supports <kbd>Tab</kbd> completion in Bash and Zsh.
+Pac also supports <kbd>Tab</kbd> completion for Bash and Zsh.
 
 > **Note**: Pac itself is not an AUR helper, though it can wrap an AUR helper
 > that supports pacman's options. See [Configuration](#configuration).
