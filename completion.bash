@@ -13,24 +13,29 @@ _pac() {
 
   case "${words[1]}" in
     install|in)
-      COMPREPLY=($(compgen -W '--asdeps --needed --overwrite' -- "$cur"))
+      COMPREPLY=($(compgen -W '-h --help --asdeps --needed --overwrite' -- "$cur"))
       return
       ;;
     search|se)
-      COMPREPLY=($(compgen -W '-i --installed' -- "$cur"))
+      COMPREPLY=($(compgen -W '-h --help -i --installed' -- "$cur"))
       return
       ;;
     owner)
+      COMPREPLY=($(compgen -W '-h --help' -- "$cur"))
       _filedir
       return
       ;;
     mark)
-      COMPREPLY=($(compgen -W '-d --asdeps' -- "$cur"))
+      COMPREPLY=($(compgen -W '-h --help -d --asdeps' -- "$cur"))
       return
       ;;
     list|ls)
-      COMPREPLY=($(compgen -W '-e --explicit -d --deps -n --native
+      COMPREPLY=($(compgen -W '-h --help -e --explicit -d --deps -n --native
       -f --foreign' -- "$cur"))
+      return
+      ;;
+    *)
+      COMPREPLY=($(compgen -W '-h --help' -- "$cur"))
       return
       ;;
   esac

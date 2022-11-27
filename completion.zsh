@@ -19,6 +19,7 @@ _pac() {
       case "${words[1]}" in
         (install|in)
           _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
             '--asdeps[Install packages as dependencies]' \
             '--needed[Do not reinstall up to date packages]' \
             '--overwrite[Overwrite conflicting files]:file' \
@@ -26,25 +27,34 @@ _pac() {
           ;;
         (search|se)
           _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
             '(-i --installed)'{-i,--installed}'[Search only installed package names and descriptions]' \
             && ret=0
           ;;
         (owner)
           _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
             '*: :_files' \
             && ret=0
           ;;
         (mark)
           _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
             '(-d --asdeps)'{-d,--asdeps}'[Mark packages as dependencies]' \
             && ret=0
           ;;
         (list|ls)
           _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
             '(-e --explicit)'{-e,--explicit}'[List packages explicitly installed]' \
             '(-d --deps)'{-d,--deps}'[List packages installed as dependencies]' \
             '(-n --native)'{-n,--native}'[List installed packages found in sync db(s)]' \
             '(-f --foreign)'{-f,--foreign}'[List installed packages not found in sync db(s)]' \
+            && ret=0
+          ;;
+        (*)
+          _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
             && ret=0
           ;;
       esac

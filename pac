@@ -21,39 +21,24 @@ Usage:
   pac [option]
 
 Commands:
-  install, in <package(s)>  Install packages and their dependencies
-  remove, rm <package(s)>   Remove packages and their dependencies
-  autoremove, arm           Remove dependencies that are no longer needed (orphans)
-  clean                     Remove old packages from cache directory
-  upgrade, up               Sync databases and upgrade installed packages
-  search, se <keyword(s)>   Search package names and descriptions
-  info, if <package(s)>     Show package information
-  files <package(s)>        Show package file list
-  owner <file(s)>           Query packages that own the files
-  mark <package(s)>         Mark packages as explicitly installed
-  list, ls                  List installed packages
-
-Command 'install' specific options:
-  --asdeps                  Install packages as dependencies
-  --needed                  Do not reinstall up to date packages
-  --overwrite <glob>        Overwrite conflicting files
-
-Command 'search' specific options:
-  -i, --installed           Search only installed package names and descriptions
-
-Command 'mark' specific options:
-  -d, --asdeps              Mark packages as dependencies
-
-Command 'list' specific options:
-  -e, --explicit            List packages explicitly installed
-  -d, --deps                List packages installed as dependencies
-  -n, --native              List installed packages found in sync db(s)
-  -f, --foreign             List installed packages not found in sync db(s)
+  install, in           Install packages and their dependencies
+  remove, rm            Remove packages and their dependencies
+  autoremove, arm       Remove dependencies that are no longer needed (orphans)
+  clean                 Remove old packages from cache directory
+  upgrade, up           Sync databases and upgrade installed packages
+  search, se            Search package names and descriptions
+  info, if              Show package information
+  files                 Show package file list
+  owner                 Query packages that own the files
+  mark                  Mark packages as explicitly installed
+  list, ls              List installed packages
 
 General options:
-  -h, --help                Print help information
-  -V, --version             Print version information
-  -s, --status              Print what pac is wrapping
+  -h, --help            Print help information
+  -V, --version         Print version information
+  -s, --status          Print what pac is wrapping
+
+Run 'pac <command> --help' for more information on a specific command.
 
 If no arguments are provided, 'pac upgrade' will be performed.
 EOF
@@ -72,29 +57,191 @@ To wrap another pacman-compatible program, set the environment variable
 EOF
 }
 
+install::help() {
+  cat << EOF
+Install packages and their dependencies
+
+Usage:
+  pac install [option(s)] <package(s)>
+
+Alias:
+  in
+
+Options:
+  --asdeps              Install packages as dependencies
+  --needed              Do not reinstall up to date packages
+  --overwrite <glob>    Overwrite conflicting files
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 install() {
+  for i in "$@"; do
+    case "$i" in
+      --asdeps|--needed|--overwrite)
+        ;;
+      -h|--help)
+        install::help
+        exit
+        ;;
+      -*)
+        echo "pac install: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   "${SUDO_PACMAN[@]}" -S "$@"
 }
 
+remove::help() {
+  cat << EOF
+Remove packages and their dependencies
+
+Usage:
+  pac remove <package(s)>
+
+Alias:
+  rm
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 remove() {
+  for i in "$@"; do
+    case "$i" in
+      -h|--help)
+        remove::help
+        exit
+        ;;
+      -*)
+        echo "pac remove: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   "${SUDO_PACMAN[@]}" -Rs "$@"
 }
 
+autoremove::help() {
+  cat << EOF
+Remove dependencies that are no longer needed (orphans)
+
+Usage:
+  pac autoremove [package(s)]
+
+Alias:
+  arm
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 autoremove() {
+  for i in "$@"; do
+    case "$i" in
+      -h|--help)
+        autoremove::help
+        exit
+        ;;
+      -*)
+        echo "pac autoremove: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   readarray -t pkgs < <("$PACMAN" -Qdtq "$@")
   if [[ -n "${pkgs[*]}" ]]; then
     "${SUDO_PACMAN[@]}" -Rs "${pkgs[@]}"
   else
-    false
+    exit 1
   fi
 }
 
+clean::help() {
+  cat << EOF
+Remove old packages from cache directory
+
+Usage:
+  pac clean [package(s)]
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 clean() {
+  for i in "$@"; do
+    case "$i" in
+      -h|--help)
+        clean::help
+        exit
+        ;;
+      -*)
+        echo "pac clean: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   "$PACMAN" -Sc "$@"
 }
 
+upgrade::help() {
+  cat << EOF
+Sync databases and upgrade installed packages
+
+Usage:
+  pac upgrade [package(s)]
+
+Alias:
+  up
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 upgrade() {
+  for i in "$@"; do
+    case "$i" in
+      -h|--help)
+        upgrade::help
+        exit
+        ;;
+      -*)
+        echo "pac upgrade: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   "${SUDO_PACMAN[@]}" -Syu "$@"
+}
+
+search::help() {
+  cat << EOF
+Search package names and descriptions
+
+Usage:
+  pac search [option] <keyword(s)>
+
+Alias:
+  se
+
+Options:
+  -i, --installed       Search only installed package names and descriptions
+
+General option:
+  -h, --help            Print help information
+EOF
 }
 
 search() {
@@ -102,6 +249,10 @@ search() {
     case "$i" in
       -i|--installed)
         local operation="-Q"
+        ;;
+      -h|--help)
+        search::help
+        exit
         ;;
       -*)
         echo "pac search: unrecognized option '$i'" 1>&2
@@ -116,7 +267,35 @@ search() {
   "$PACMAN" "${operation:-"-S"}" -s "${pkgs[@]}"
 }
 
+info::help() {
+  cat << EOF
+Show package information
+
+Usage:
+  pac info <package(s)>
+
+Alias:
+  if
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 info() {
+  for i in "$@"; do
+    case "$i" in
+      -h|--help)
+        info::help
+        exit
+        ;;
+      -*)
+        echo "pac info: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   for i in "$@"; do
     # Add newline to -g to match -i
     ("$PACMAN" -Qg "$i" 2> /dev/null && echo) ||
@@ -126,12 +305,77 @@ info() {
   done
 }
 
+owner::help() {
+  cat << EOF
+Query packages that own the files
+
+Usage:
+  pac owner <file(s)>
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 owner() {
+  for i in "$@"; do
+    case "$i" in
+      -h|--help)
+        owner::help
+        exit
+        ;;
+      -*)
+        echo "pac owner: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   "$PACMAN" -Qo "$@"
 }
 
+files::help() {
+  cat << EOF
+Show package file list
+
+Usage:
+  pac files <package(s)>
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
 files() {
+  for i in "$@"; do
+    case "$i" in
+      -h|--help)
+        files::help
+        exit
+        ;;
+      -*)
+        echo "pac files: unrecognized option '$i'" 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
   "$PACMAN" -Ql "$@"
+}
+
+mark::help() {
+  cat << EOF
+Mark packages as explicitly installed
+
+Usage:
+  pac mark [option] <package(s)>
+
+Options:
+  -d, --asdeps          Mark packages as dependencies
+
+General option:
+  -h, --help            Print help information
+EOF
 }
 
 mark() {
@@ -139,6 +383,10 @@ mark() {
     case "$i" in
       -d|--asdeps)
         local opts+=("--asdeps")
+        ;;
+      -h|--help)
+        mark::help
+        exit
         ;;
       -*)
         echo "pac mark: unrecognized option '$i'" 1>&2
@@ -151,6 +399,27 @@ mark() {
   done
 
   "${SUDO_PACMAN[@]}" -D "${opts[@]:-"--asexplicit"}" "${pkgs[@]}"
+}
+
+list::help() {
+  cat << EOF
+List installed packages
+
+Usage:
+  pac list [option(s)] [package(s)]
+
+Alias:
+  ls
+
+Options:
+  -e, --explicit        List packages explicitly installed
+  -d, --deps            List packages installed as dependencies
+  -n, --native          List installed packages found in sync db(s)
+  -f, --foreign         List installed packages not found in sync db(s)
+
+General option:
+  -h, --help            Print help information
+EOF
 }
 
 list() {
@@ -167,6 +436,10 @@ list() {
         ;;
       -f|--foreign)
         local opts+=("--foreign")
+        ;;
+      -h|--help)
+        list::help
+        exit
         ;;
       -*)
         echo "pac list: unrecognized option '$i'" 1>&2
