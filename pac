@@ -191,7 +191,7 @@ clean() {
     esac
   done
 
-  "$PACMAN" -Sc "$@"
+  "${SUDO_PACMAN[@]}" -Sc "$@"
 }
 
 upgrade::help() {
