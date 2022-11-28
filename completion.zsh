@@ -21,14 +21,47 @@ _pac() {
           _arguments \
             '(- *)'{-h,--help}'[Print help information]' \
             '--asdeps[Install packages as dependencies]' \
+            '--asexplicit[Install packages as explicitly installed]' \
             '--needed[Do not reinstall up to date packages]' \
-            '--overwrite[Overwrite conflicting files]:file' \
+            '--noconfirm[Do not ask for any confirmation]' \
+            '--overwrite[Overwrite conflicting files (can be used more than once)]:file' \
+            && ret=0
+          ;;
+        (remove|rm)
+          _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
+            '(-c --cascade)'{-c,--cascade}'[Also remove packages that depend on them]' \
+            '(-u --unneeded)'{-u,--unneeded}'[Only remove unneeded packages]' \
+            '(-n --nosave)'{-n,--nosave}'[Also remove configuration files]' \
+            '--noconfirm[Do not ask for any confirmation]' \
+            && ret=0
+          ;;
+        (autoremove|arm)
+          _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
+            '(-n --nosave)'{-n,--nosave}'[Also remove configuration files]' \
+            '--noconfirm[Do not ask for any confirmation]' \
+            && ret=0
+          ;;
+        (clean)
+          _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
+            '--noconfirm[Do not ask for any confirmation]' \
+            && ret=0
+          ;;
+        (upgrade|up)
+          _arguments \
+            '(- *)'{-h,--help}'[Print help information]' \
+            '--ignore[Ignore a package upgrade (can be used more than once)]:package' \
+            '--ignoregroup[Ignore a group upgrade (can be used more than once)]:package group' \
+            '--noconfirm[Do not ask for any confirmation]' \
+            '--overwrite[Overwrite conflicting files (can be used more than once)]:file' \
             && ret=0
           ;;
         (search|se)
           _arguments \
             '(- *)'{-h,--help}'[Print help information]' \
-            '(-i --installed)'{-i,--installed}'[Search only installed package names and descriptions]' \
+            '(-i --installed)'{-i,--installed}'[Search only installed packages]' \
             && ret=0
           ;;
         (owner)

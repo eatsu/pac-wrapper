@@ -69,8 +69,10 @@ Alias:
 
 Options:
   --asdeps              Install packages as dependencies
+  --asexplicit          Install packages as explicitly installed
   --needed              Do not reinstall up to date packages
-  --overwrite <glob>    Overwrite conflicting files
+  --noconfirm           Do not ask for any confirmation
+  --overwrite <glob>    Overwrite conflicting files (can be used more than once)
 
 General option:
   -h, --help            Print help information
@@ -80,7 +82,7 @@ EOF
 install() {
   for i in "$@"; do
     case "$i" in
-      --asdeps|--needed|--overwrite)
+      --asdeps|--asexplicit|--needed|--noconfirm|--overwrite)
         ;;
       -h|--help)
         install::help
@@ -101,10 +103,16 @@ remove::help() {
 Remove packages and their dependencies
 
 Usage:
-  pac remove <package(s)>
+  pac remove [option(s)] <package(s)>
 
 Alias:
   rm
+
+Options:
+  -c, --cascade         Also remove packages that depend on them
+  -u, --unneeded        Only remove unneeded packages
+  -n, --nosave          Also remove configuration files
+  --noconfirm           Do not ask for any confirmation
 
 General option:
   -h, --help            Print help information
@@ -114,6 +122,8 @@ EOF
 remove() {
   for i in "$@"; do
     case "$i" in
+      -c|--cascade|-u|--unneeded|-n|--nosave|--noconfirm)
+        ;;
       -h|--help)
         remove::help
         exit
@@ -133,10 +143,14 @@ autoremove::help() {
 Remove dependencies that are no longer needed (orphans)
 
 Usage:
-  pac autoremove [package(s)]
+  pac autoremove [option(s)] [package(s)]
 
 Alias:
   arm
+
+Options:
+  -n, --nosave          Also remove configuration files
+  --noconfirm           Do not ask for any confirmation
 
 General option:
   -h, --help            Print help information
@@ -146,6 +160,9 @@ EOF
 autoremove() {
   for i in "$@"; do
     case "$i" in
+      -n|--nosave|--noconfirm)
+        local opts+=("$i")
+        ;;
       -h|--help)
         autoremove::help
         exit
@@ -154,12 +171,15 @@ autoremove() {
         echo "pac autoremove: unrecognized option '$i'" 1>&2
         exit 1
         ;;
+      *)
+        local pkgs+=("$i")
+        ;;
     esac
   done
 
-  readarray -t pkgs < <("$PACMAN" -Qdtq "$@")
+  readarray -t pkgs < <("$PACMAN" -Qdtq "${pkgs[@]}")
   if [[ -n "${pkgs[*]}" ]]; then
-    "${SUDO_PACMAN[@]}" -Rs "${pkgs[@]}"
+    "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "${pkgs[@]}"
   else
     exit 1
   fi
@@ -170,7 +190,10 @@ clean::help() {
 Remove old packages from cache directory
 
 Usage:
-  pac clean [package(s)]
+  pac clean [option]
+
+Options:
+  --noconfirm           Do not ask for any confirmation
 
 General option:
   -h, --help            Print help information
@@ -180,6 +203,8 @@ EOF
 clean() {
   for i in "$@"; do
     case "$i" in
+      --noconfirm)
+        ;;
       -h|--help)
         clean::help
         exit
@@ -199,10 +224,16 @@ upgrade::help() {
 Sync databases and upgrade installed packages
 
 Usage:
-  pac upgrade [package(s)]
+  pac upgrade [option(s)] [package(s)]
 
 Alias:
   up
+
+Options:
+  --ignore <package>    Ignore a package upgrade (can be used more than once)
+  --ignoregroup <group> Ignore a group upgrade (can be used more than once)
+  --noconfirm           Do not ask for any confirmation
+  --overwrite <glob>    Overwrite conflicting files (can be used more than once)
 
 General option:
   -h, --help            Print help information
@@ -212,6 +243,8 @@ EOF
 upgrade() {
   for i in "$@"; do
     case "$i" in
+      --ignore|--ignoregroup|--noconfirm|--overwrite)
+        ;;
       -h|--help)
         upgrade::help
         exit
@@ -237,7 +270,7 @@ Alias:
   se
 
 Options:
-  -i, --installed       Search only installed package names and descriptions
+  -i, --installed       Search only installed packages
 
 General option:
   -h, --help            Print help information

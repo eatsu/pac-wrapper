@@ -13,7 +13,26 @@ _pac() {
 
   case "${words[1]}" in
     install|in)
-      COMPREPLY=($(compgen -W '-h --help --asdeps --needed --overwrite' -- "$cur"))
+      COMPREPLY=($(compgen -W '-h --help --asdeps --asexplicit --needed
+        --noconfirm --overwrite' -- "$cur"))
+      return
+      ;;
+    remove|rm)
+      COMPREPLY=($(compgen -W '-h --help -c --cascade -u --unneeded -n --nosave
+        --noconfirm' -- "$cur"))
+      return
+      ;;
+    autoremove|arm)
+      COMPREPLY=($(compgen -W '-h --help -n --nosave --noconfirm' -- "$cur"))
+      return
+      ;;
+    clean)
+      COMPREPLY=($(compgen -W '-h --help --noconfirm' -- "$cur"))
+      return
+      ;;
+    upgrade|up)
+      COMPREPLY=($(compgen -W '-h --help --ignore --ignoregroup --noconfirm
+        --overwrite' -- "$cur"))
       return
       ;;
     search|se)
@@ -31,7 +50,7 @@ _pac() {
       ;;
     list|ls)
       COMPREPLY=($(compgen -W '-h --help -e --explicit -d --deps -n --native
-      -f --foreign' -- "$cur"))
+        -f --foreign' -- "$cur"))
       return
       ;;
     *)
