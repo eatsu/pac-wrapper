@@ -393,7 +393,9 @@ files() {
     esac
   done
 
-  "$PACMAN" -Ql "$@"
+  for i in "$@"; do
+    "$PACMAN" -Ql "$i" 2> /dev/null || "$PACMAN" -Fl "$i"
+  done
 }
 
 mark::help() {
