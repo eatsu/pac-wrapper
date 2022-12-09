@@ -326,12 +326,12 @@ search() {
         exit 1
         ;;
       *)
-        local pkgs+=("$i")
+        local kwds+=("$i")
         ;;
     esac
   done
 
-  "$PACMAN" "${operation:-"-S"}" -s "${pkgs[@]}"
+  "$PACMAN" "${operation:-"-S"}" -s "${kwds[@]}"
 }
 
 info::help() {
@@ -360,15 +360,18 @@ info() {
         echo "pac info: unrecognized option '$i'" 1>&2
         exit 1
         ;;
+      *)
+        local pkgs+=("$i")
+        ;;
     esac
   done
 
-  for i in "$@"; do
+  for pkg in "${pkgs[@]}"; do
     # Add newline to -g to match -i
-    ("$PACMAN" -Qg "$i" 2> /dev/null && echo) ||
-    ("$PACMAN" -Qi "$i" 2> /dev/null) ||
-    ("$PACMAN" -Sg "$i" 2> /dev/null && echo) ||
-    ("$PACMAN" -Si "$i")
+    ("$PACMAN" -Qg "$pkg" 2> /dev/null && echo) ||
+    ("$PACMAN" -Qi "$pkg" 2> /dev/null) ||
+    ("$PACMAN" -Sg "$pkg" 2> /dev/null && echo) ||
+    ("$PACMAN" -Si "$pkg")
   done
 }
 
@@ -395,10 +398,13 @@ owner() {
         echo "pac owner: unrecognized option '$i'" 1>&2
         exit 1
         ;;
+      *)
+        local files+=("$i")
+        ;;
     esac
   done
 
-  "$PACMAN" -Qo "$@"
+  "$PACMAN" -Qo "${files[@]}"
 }
 
 files::help() {
@@ -424,11 +430,14 @@ files() {
         echo "pac files: unrecognized option '$i'" 1>&2
         exit 1
         ;;
+      *)
+        local pkgs+=("$i")
+        ;;
     esac
   done
 
-  for i in "$@"; do
-    "$PACMAN" -Ql "$i" 2> /dev/null || "$PACMAN" -Fl "$i"
+  for pkg in "${pkgs[@]}"; do
+    "$PACMAN" -Ql "$pkg" 2> /dev/null || "$PACMAN" -Fl "$pkg"
   done
 }
 
