@@ -191,9 +191,10 @@ clean::help() {
 Remove old packages from cache
 
 Usage:
-  pac clean [option]
+  pac clean [option(s)]
 
 Options:
+  -a, --all             Remove all packages from cache
   --noconfirm           Do not ask for confirmation
 
 General option:
@@ -204,20 +205,24 @@ EOF
 clean() {
   for i in "$@"; do
     case "$i" in
+      -a|--all)
+        local opts+=("--clean")
+        ;;
       --noconfirm)
+        local opts+=("$i")
         ;;
       -h|--help)
         clean::help
         exit
         ;;
-      -*)
+      *)
         echo "pac clean: unrecognized option '$i'" 1>&2
         exit 1
         ;;
     esac
   done
 
-  "${SUDO_PACMAN[@]}" -Sc "$@"
+  "${SUDO_PACMAN[@]}" -Sc "${opts[@]}"
 }
 
 upgrade::help() {

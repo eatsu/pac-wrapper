@@ -149,6 +149,7 @@ _pac_autoremove_options=(
 )
 
 _pac_clean_options=(
+  '(-a --all)'{-a,--all}'[Remove all packages from cache]'
   '--noconfirm[Do not ask for confirmation]'
   '*:'
 )

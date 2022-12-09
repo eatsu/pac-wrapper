@@ -27,7 +27,7 @@ _pac() {
       return
       ;;
     clean)
-      COMPREPLY=($(compgen -W '-h --help --noconfirm' -- "$cur"))
+      COMPREPLY=($(compgen -W '-h --help -a --all --noconfirm' -- "$cur"))
       return
       ;;
     upgrade|up)
