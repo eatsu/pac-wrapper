@@ -131,7 +131,7 @@ _pac_upgrade_options=(
   '*--ignoregroup[Ignore a group upgrade]: :_pac_installed_groups'
   '--noconfirm[Do not ask for confirmation]'
   '*--overwrite[Overwrite conflicting files]: :_files'
-  '*: :_pac_all_packages_and_groups'
+  '*:'
 )
 
 _pac_remove_options=(

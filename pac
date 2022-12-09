@@ -230,7 +230,7 @@ upgrade::help() {
 Sync databases and upgrade installed packages
 
 Usage:
-  pac upgrade [option(s)] [package(s)]
+  pac upgrade [option(s)]
 
 Alias:
   up
@@ -247,22 +247,28 @@ EOF
 }
 
 upgrade() {
-  for i in "$@"; do
-    case "$i" in
-      --ignore|--ignoregroup|--noconfirm|--overwrite)
+  while (( $# > 0 )); do
+    case "$1" in
+      --ignore|--ignoregroup|--overwrite)
+        local opts+=("$1" "$2")
+        shift
+        ;;
+      --noconfirm)
+        local opts+=("$1")
         ;;
       -h|--help)
         upgrade::help
         exit
         ;;
-      -*)
-        echo "pac upgrade: unrecognized option '$i'" 1>&2
+      *)
+        echo "pac upgrade: unrecognized option '$1'" 1>&2
         exit 1
         ;;
     esac
+    shift
   done
 
-  "${SUDO_PACMAN[@]}" -Syu "$@"
+  "${SUDO_PACMAN[@]}" -Syu "${opts[@]}"
 }
 
 search::help() {
