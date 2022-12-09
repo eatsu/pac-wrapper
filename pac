@@ -23,8 +23,8 @@ Usage:
 Commands:
   install, in           Install packages and their dependencies
   remove, rm            Remove packages and their dependencies
-  autoremove, arm       Remove dependencies that are no longer needed (orphans)
-  clean                 Remove old packages from cache directory
+  autoremove, arm       Remove dependencies that are no longer needed
+  clean                 Remove old packages from cache
   upgrade, up           Sync databases and upgrade installed packages
   search, se            Search package names and descriptions
   info, if              Show package information
@@ -70,8 +70,8 @@ Alias:
 Options:
   --asdeps              Install packages as dependencies
   --asexplicit          Install packages as explicitly installed
-  --needed              Do not reinstall up to date packages
-  --noconfirm           Do not ask for any confirmation
+  --needed              Do not reinstall up-to-date packages
+  --noconfirm           Do not ask for confirmation
   --overwrite <glob>    Overwrite conflicting files (can be used more than once)
 
 General option:
@@ -109,10 +109,10 @@ Alias:
   rm
 
 Options:
-  -c, --cascade         Also remove packages that depend on them
-  -u, --unneeded        Only remove unneeded packages
-  -n, --nosave          Also remove configuration files
-  --noconfirm           Do not ask for any confirmation
+  -c, --cascade         Remove also dependent packages
+  -u, --unneeded        Remove only non-dependent packages
+  -n, --nosave          Remove also configuration files
+  --noconfirm           Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -140,7 +140,7 @@ remove() {
 
 autoremove::help() {
   cat << EOF
-Remove dependencies that are no longer needed (orphans)
+Remove dependencies that are no longer needed
 
 Usage:
   pac autoremove [option(s)] [package(s)]
@@ -149,8 +149,8 @@ Alias:
   arm
 
 Options:
-  -n, --nosave          Also remove configuration files
-  --noconfirm           Do not ask for any confirmation
+  -n, --nosave          Remove also configuration files
+  --noconfirm           Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -187,13 +187,13 @@ autoremove() {
 
 clean::help() {
   cat << EOF
-Remove old packages from cache directory
+Remove old packages from cache
 
 Usage:
   pac clean [option]
 
 Options:
-  --noconfirm           Do not ask for any confirmation
+  --noconfirm           Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -232,7 +232,7 @@ Alias:
 Options:
   --ignore <package>    Ignore a package upgrade (can be used more than once)
   --ignoregroup <group> Ignore a group upgrade (can be used more than once)
-  --noconfirm           Do not ask for any confirmation
+  --noconfirm           Do not ask for confirmation
   --overwrite <glob>    Overwrite conflicting files (can be used more than once)
 
 General option:

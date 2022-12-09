@@ -94,7 +94,7 @@ _pac_commands() {
     {install,in}':Install packages and their dependencies'
     {remove,rm}':Remove packages and their dependencies'
     {autoremove,arm}':Remove dependencies that are no longer needed'
-    'clean:Remove old packages from cache directory'
+    'clean:Remove old packages from cache'
     {upgrade,up}':Sync databases and upgrade installed packages'
     {search,se}':Search package names and descriptions'
     {info,if}':Show package information'
