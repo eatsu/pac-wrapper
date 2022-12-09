@@ -121,16 +121,16 @@ _pac_install_options=(
   '(--asexplicit)--asdeps[Install packages as dependencies]'
   '(--asdeps)--asexplicit[Install packages as explicitly installed]'
   '--needed[Do not reinstall up-to-date packages]'
-  '--noconfirm[Do not ask for confirmation]'
   '*--overwrite[Overwrite conflicting files]: :_files'
+  '(-y --yes)'{-y,--yes}'[Do not ask for confirmation]'
   '*: :_pac_all_packages_and_groups'
 )
 
 _pac_upgrade_options=(
   '*--ignore[Ignore a package upgrade]: :_pac_installed_packages'
   '*--ignoregroup[Ignore a group upgrade]: :_pac_installed_groups'
-  '--noconfirm[Do not ask for confirmation]'
   '*--overwrite[Overwrite conflicting files]: :_files'
+  '(-y --yes)'{-y,--yes}'[Do not ask for confirmation]'
   '*:'
 )
 
@@ -138,19 +138,19 @@ _pac_remove_options=(
   '(-c --cascade -u --unneeded)'{-c,--cascade}'[Remove also dependent packages]'
   '(-c --cascade -u --unneeded)'{-u,--unneeded}'[Remove only non-dependent packages]'
   '(-n --nosave)'{-n,--nosave}'[Remove also configuration files]'
-  '--noconfirm[Do not ask for confirmation]'
+  '(-y --yes)'{-y,--yes}'[Do not ask for confirmation]'
   '*: :_pac_installed_packages_and_groups'
 )
 
 _pac_autoremove_options=(
   '(-n --nosave)'{-n,--nosave}'[Remove also configuration files]'
-  '--noconfirm[Do not ask for confirmation]'
+  '(-y --yes)'{-y,--yes}'[Do not ask for confirmation]'
   '*: :_pac_orphan_packages'
 )
 
 _pac_clean_options=(
   '(-a --all)'{-a,--all}'[Remove all packages from cache]'
-  '--noconfirm[Do not ask for confirmation]'
+  '(-y --yes)'{-y,--yes}'[Do not ask for confirmation]'
   '*:'
 )
 

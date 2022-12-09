@@ -71,8 +71,8 @@ Options:
   --asdeps              Install packages as dependencies
   --asexplicit          Install packages as explicitly installed
   --needed              Do not reinstall up-to-date packages
-  --noconfirm           Do not ask for confirmation
   --overwrite <glob>    Overwrite conflicting files (can be used more than once)
+  -y, --yes             Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -80,22 +80,34 @@ EOF
 }
 
 install() {
-  for i in "$@"; do
-    case "$i" in
-      --asdeps|--asexplicit|--needed|--noconfirm|--overwrite)
+  while (( $# > 0 )); do
+    case "$1" in
+      --asdeps|--asexplicit|--needed)
+        local opts+=("$1")
+        ;;
+      --overwrite)
+        local opts+=("$1" "$2")
+        shift
+        ;;
+      -y|--yes)
+        local opts+=("--noconfirm")
         ;;
       -h|--help)
         install::help
         exit
         ;;
       -*)
-        echo "pac install: unrecognized option '$i'" 1>&2
+        echo "pac install: unrecognized option '$1'" 1>&2
         exit 1
         ;;
+      *)
+        local pkgs+=("$1")
+        ;;
     esac
+    shift
   done
 
-  "${SUDO_PACMAN[@]}" -S "$@"
+  "${SUDO_PACMAN[@]}" -S "${opts[@]}" "${pkgs[@]}"
 }
 
 remove::help() {
@@ -112,7 +124,7 @@ Options:
   -c, --cascade         Remove also dependent packages
   -u, --unneeded        Remove only non-dependent packages
   -n, --nosave          Remove also configuration files
-  --noconfirm           Do not ask for confirmation
+  -y, --yes             Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -122,7 +134,11 @@ EOF
 remove() {
   for i in "$@"; do
     case "$i" in
-      -c|--cascade|-u|--unneeded|-n|--nosave|--noconfirm)
+      -c|--cascade|-u|--unneeded|-n|--nosave)
+        local opts+=("$i")
+        ;;
+      -y|--yes)
+        local opts+=("--noconfirm")
         ;;
       -h|--help)
         remove::help
@@ -132,10 +148,13 @@ remove() {
         echo "pac remove: unrecognized option '$i'" 1>&2
         exit 1
         ;;
+      *)
+        local pkgs+=("$i")
+        ;;
     esac
   done
 
-  "${SUDO_PACMAN[@]}" -Rs "$@"
+  "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "${pkgs[@]}"
 }
 
 autoremove::help() {
@@ -150,7 +169,7 @@ Alias:
 
 Options:
   -n, --nosave          Remove also configuration files
-  --noconfirm           Do not ask for confirmation
+  -y, --yes             Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -160,8 +179,11 @@ EOF
 autoremove() {
   for i in "$@"; do
     case "$i" in
-      -n|--nosave|--noconfirm)
+      -n|--nosave)
         local opts+=("$i")
+        ;;
+      -y|--yes)
+        local opts+=("--noconfirm")
         ;;
       -h|--help)
         autoremove::help
@@ -195,7 +217,7 @@ Usage:
 
 Options:
   -a, --all             Remove all packages from cache
-  --noconfirm           Do not ask for confirmation
+  -y, --yes             Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -208,8 +230,8 @@ clean() {
       -a|--all)
         local opts+=("--clean")
         ;;
-      --noconfirm)
-        local opts+=("$i")
+      -y|--yes)
+        local opts+=("--noconfirm")
         ;;
       -h|--help)
         clean::help
@@ -238,8 +260,8 @@ Alias:
 Options:
   --ignore <package>    Ignore a package upgrade (can be used more than once)
   --ignoregroup <group> Ignore a group upgrade (can be used more than once)
-  --noconfirm           Do not ask for confirmation
   --overwrite <glob>    Overwrite conflicting files (can be used more than once)
+  -y, --yes             Do not ask for confirmation
 
 General option:
   -h, --help            Print help information
@@ -253,8 +275,8 @@ upgrade() {
         local opts+=("$1" "$2")
         shift
         ;;
-      --noconfirm)
-        local opts+=("$1")
+      -y|--yes)
+        local opts+=("--noconfirm")
         ;;
       -h|--help)
         upgrade::help
