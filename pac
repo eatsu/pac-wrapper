@@ -181,6 +181,7 @@ autoremove() {
   if [[ -n "${pkgs[*]}" ]]; then
     "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "${pkgs[@]}"
   else
+    echo "pac autoremove: no orphan packages were found" 1>&2
     exit 1
   fi
 }
