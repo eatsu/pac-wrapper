@@ -367,9 +367,15 @@ info() {
   done
 
   for pkg in "${pkgs[@]}"; do
+    # Allow package files as arguments
+    if [[ -f "$pkg" ]]; then
+      local opts+=("--file")
+    fi
+
+    # Try querying the local database first, then the remote one
     # Add newline to -g to match -i
+    ("$PACMAN" -Qi "${opts[@]}" "$pkg" 2> /dev/null) ||
     ("$PACMAN" -Qg "$pkg" 2> /dev/null && echo) ||
-    ("$PACMAN" -Qi "$pkg" 2> /dev/null) ||
     ("$PACMAN" -Sg "$pkg" 2> /dev/null && echo) ||
     ("$PACMAN" -Si "$pkg")
   done
@@ -437,7 +443,14 @@ files() {
   done
 
   for pkg in "${pkgs[@]}"; do
-    "$PACMAN" -Ql "$pkg" 2> /dev/null || "$PACMAN" -Fl "$pkg"
+    # Allow package files as arguments
+    if [[ -f "$pkg" ]]; then
+      local opts+=("--file")
+    fi
+
+    # Try querying the local database first, then the remote one
+    "$PACMAN" -Ql "${opts[@]}" "$pkg" 2> /dev/null ||
+    "$PACMAN" -Fl "$pkg"
   done
 }
 
