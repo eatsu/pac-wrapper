@@ -92,13 +92,15 @@ install() {
     case "$1" in
       --asdeps|--asexplicit|--needed)
         opts+=("$1")
+        shift
         ;;
       --overwrite)
         opts+=("$1" "$2")
-        shift
+        shift 2
         ;;
       -y|--yes)
         opts+=("--noconfirm")
+        shift
         ;;
       -h|--help)
         install::help
@@ -109,7 +111,6 @@ install() {
         break
         ;;
     esac
-    shift
   done
 
   "${SUDO_PACMAN[@]}" -S "${opts[@]}" "$@"
@@ -149,9 +150,11 @@ remove() {
     case "$1" in
       -c|--cascade|-u|--unneeded|-n|--nosave)
         opts+=("$1")
+        shift
         ;;
       -y|--yes)
         opts+=("--noconfirm")
+        shift
         ;;
       -h|--help)
         remove::help
@@ -162,7 +165,6 @@ remove() {
         break
         ;;
     esac
-    shift
   done
 
   "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "$@"
@@ -200,9 +202,11 @@ autoremove() {
     case "$1" in
       -n|--nosave)
         opts+=("$1")
+        shift
         ;;
       -y|--yes)
         opts+=("--noconfirm")
+        shift
         ;;
       -h|--help)
         autoremove::help
@@ -213,7 +217,6 @@ autoremove() {
         break
         ;;
     esac
-    shift
   done
 
   readarray -t pkgs < <("$PACMAN" -Qdtq "$@")
@@ -254,9 +257,11 @@ clean() {
     case "$1" in
       -a|--all)
         opts+=("--clean")
+        shift
         ;;
       -y|--yes)
         opts+=("--noconfirm")
+        shift
         ;;
       -h|--help)
         clean::help
@@ -267,7 +272,6 @@ clean() {
         break
         ;;
     esac
-    shift
   done
 
   "${SUDO_PACMAN[@]}" -Sc "${opts[@]}"
@@ -307,10 +311,11 @@ upgrade() {
     case "$1" in
       --ignore|--ignoregroup|--overwrite)
         opts+=("$1" "$2")
-        shift
+        shift 2
         ;;
       -y|--yes)
         opts+=("--noconfirm")
+        shift
         ;;
       -h|--help)
         upgrade::help
@@ -321,7 +326,6 @@ upgrade() {
         break
         ;;
     esac
-    shift
   done
 
   "${SUDO_PACMAN[@]}" -Syu "${opts[@]}"
@@ -358,6 +362,7 @@ search() {
     case "$1" in
       -i|--installed)
         operation="-Q"
+        shift
         ;;
       -h|--help)
         search::help
@@ -368,7 +373,6 @@ search() {
         break
         ;;
     esac
-    shift
   done
 
   "$PACMAN" "${operation:-"-S"}" -s "$@"
@@ -409,7 +413,6 @@ info() {
         break
         ;;
     esac
-    shift
   done
 
   for pkg; do
@@ -459,7 +462,6 @@ owner() {
         break
         ;;
     esac
-    shift
   done
 
   "$PACMAN" -Qo "$@"
@@ -497,7 +499,6 @@ files() {
         break
         ;;
     esac
-    shift
   done
 
   for pkg; do
@@ -540,6 +541,7 @@ mark() {
     case "$1" in
       -d|--asdeps)
         opts+=("--asdeps")
+        shift
         ;;
       -h|--help)
         mark::help
@@ -550,7 +552,6 @@ mark() {
         break
         ;;
     esac
-    shift
   done
 
   "${SUDO_PACMAN[@]}" -D "${opts[@]:-"--asexplicit"}" "$@"
@@ -590,10 +591,12 @@ list() {
     case "$1" in
       -e|--explicit|-d|--deps|-n|--native)
         opts+=("$1")
+        shift
         ;;
       # We use -f instead of -m
       -f|--foreign)
         opts+=("--foreign")
+        shift
         ;;
       -h|--help)
         list::help
@@ -604,7 +607,6 @@ list() {
         break
         ;;
     esac
-    shift
   done
 
   "$PACMAN" -Q "${opts[@]}" "$@"
