@@ -80,34 +80,39 @@ EOF
 }
 
 install() {
-  while (( $# > 0 )); do
+  local cmdname shortopts longopts args opts
+  cmdname="pac install"
+  shortopts="yh"
+  longopts="asdeps,asexplicit,needed,overwrite:,yes,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
     case "$1" in
       --asdeps|--asexplicit|--needed)
-        local opts+=("$1")
+        opts+=("$1")
         ;;
       --overwrite)
-        local opts+=("$1" "$2")
+        opts+=("$1" "$2")
         shift
         ;;
       -y|--yes)
-        local opts+=("--noconfirm")
+        opts+=("--noconfirm")
         ;;
       -h|--help)
         install::help
         exit
         ;;
-      -*)
-        echo "pac install: unrecognized option '$1'" 1>&2
-        exit 1
-        ;;
-      *)
-        local pkgs+=("$1")
+      --)
+        shift
+        break
         ;;
     esac
     shift
   done
 
-  "${SUDO_PACMAN[@]}" -S "${opts[@]}" "${pkgs[@]}"
+  "${SUDO_PACMAN[@]}" -S "${opts[@]}" "$@"
 }
 
 remove::help() {
@@ -132,29 +137,35 @@ EOF
 }
 
 remove() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args opts
+  cmdname="pac remove"
+  shortopts="cunyh"
+  longopts="cascade,unneeded,nosave,yes,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -c|--cascade|-u|--unneeded|-n|--nosave)
-        local opts+=("$i")
+        opts+=("$1")
         ;;
       -y|--yes)
-        local opts+=("--noconfirm")
+        opts+=("--noconfirm")
         ;;
       -h|--help)
         remove::help
         exit
         ;;
-      -*)
-        echo "pac remove: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local pkgs+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "${pkgs[@]}"
+  "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "$@"
 }
 
 autoremove::help() {
@@ -177,33 +188,39 @@ EOF
 }
 
 autoremove() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args opts
+  cmdname="pac autoremove"
+  shortopts="nyh"
+  longopts="nosave,yes,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -n|--nosave)
-        local opts+=("$i")
+        opts+=("$1")
         ;;
       -y|--yes)
-        local opts+=("--noconfirm")
+        opts+=("--noconfirm")
         ;;
       -h|--help)
         autoremove::help
         exit
         ;;
-      -*)
-        echo "pac autoremove: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local pkgs+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  readarray -t pkgs < <("$PACMAN" -Qdtq "${pkgs[@]}")
+  readarray -t pkgs < <("$PACMAN" -Qdtq "$@")
   if [[ -n "${pkgs[*]}" ]]; then
     "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "${pkgs[@]}"
   else
-    echo "pac autoremove: no orphan packages were found" 1>&2
+    echo "$cmdname: no orphan packages were found" >&2
     exit 1
   fi
 }
@@ -225,23 +242,32 @@ EOF
 }
 
 clean() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args opts
+  cmdname="pac clean"
+  shortopts="ayh"
+  longopts="all,yes,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -a|--all)
-        local opts+=("--clean")
+        opts+=("--clean")
         ;;
       -y|--yes)
-        local opts+=("--noconfirm")
+        opts+=("--noconfirm")
         ;;
       -h|--help)
         clean::help
         exit
         ;;
-      *)
-        echo "pac clean: unrecognized option '$i'" 1>&2
-        exit 1
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
   "${SUDO_PACMAN[@]}" -Sc "${opts[@]}"
@@ -269,22 +295,30 @@ EOF
 }
 
 upgrade() {
-  while (( $# > 0 )); do
+  local cmdname shortopts longopts args opts
+  cmdname="pac upgrade"
+  shortopts="yh"
+  longopts="ignore:,ignoregroup:,overwrite:,yes,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
     case "$1" in
       --ignore|--ignoregroup|--overwrite)
-        local opts+=("$1" "$2")
+        opts+=("$1" "$2")
         shift
         ;;
       -y|--yes)
-        local opts+=("--noconfirm")
+        opts+=("--noconfirm")
         ;;
       -h|--help)
         upgrade::help
         exit
         ;;
-      *)
-        echo "pac upgrade: unrecognized option '$1'" 1>&2
-        exit 1
+      --)
+        shift
+        break
         ;;
     esac
     shift
@@ -312,26 +346,32 @@ EOF
 }
 
 search() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args operation
+  cmdname="pac search"
+  shortopts="ih"
+  longopts="installed,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -i|--installed)
-        local operation="-Q"
+        operation="-Q"
         ;;
       -h|--help)
         search::help
         exit
         ;;
-      -*)
-        echo "pac search: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local kwds+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  "$PACMAN" "${operation:-"-S"}" -s "${kwds[@]}"
+  "$PACMAN" "${operation:-"-S"}" -s "$@"
 }
 
 info::help() {
@@ -350,26 +390,32 @@ EOF
 }
 
 info() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args opts
+  cmdname="pac info"
+  shortopts="h"
+  longopts="help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -h|--help)
         info::help
         exit
         ;;
-      -*)
-        echo "pac info: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local pkgs+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  for pkg in "${pkgs[@]}"; do
+  for pkg; do
     # Allow package files as arguments
     if [[ -f "$pkg" ]]; then
-      local opts+=("--file")
+      opts+=("--file")
     fi
 
     # Try querying the local database first, then the remote one
@@ -394,23 +440,29 @@ EOF
 }
 
 owner() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args
+  cmdname="pac owner"
+  shortopts="h"
+  longopts="help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -h|--help)
         owner::help
         exit
         ;;
-      -*)
-        echo "pac owner: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local files+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  "$PACMAN" -Qo "${files[@]}"
+  "$PACMAN" -Qo "$@"
 }
 
 files::help() {
@@ -426,26 +478,32 @@ EOF
 }
 
 files() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args opts
+  cmdname="pac files"
+  shortopts="h"
+  longopts="help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -h|--help)
         files::help
         exit
         ;;
-      -*)
-        echo "pac files: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local pkgs+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  for pkg in "${pkgs[@]}"; do
+  for pkg; do
     # Allow package files as arguments
     if [[ -f "$pkg" ]]; then
-      local opts+=("--file")
+      opts+=("--file")
     fi
 
     # Try querying the local database first, then the remote one
@@ -470,26 +528,32 @@ EOF
 }
 
 mark() {
-  for i in "$@"; do
-    case "$i" in
+  local cmdname shortopts longopts args opts
+  cmdname="pac mark"
+  shortopts="dh"
+  longopts="asdeps,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
       -d|--asdeps)
-        local opts+=("--asdeps")
+        opts+=("--asdeps")
         ;;
       -h|--help)
         mark::help
         exit
         ;;
-      -*)
-        echo "pac mark: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local pkgs+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  "${SUDO_PACMAN[@]}" -D "${opts[@]:-"--asexplicit"}" "${pkgs[@]}"
+  "${SUDO_PACMAN[@]}" -D "${opts[@]:-"--asexplicit"}" "$@"
 }
 
 list::help() {
@@ -514,35 +578,36 @@ EOF
 }
 
 list() {
-  for i in "$@"; do
-    case "$i" in
-      -e|--explicit)
-        local opts+=("--explicit")
+  local cmdname shortopts longopts args opts
+  cmdname="pac list"
+  shortopts="ednfh"
+  longopts="explicit,deps,native,foreign,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
+      -e|--explicit|-d|--deps|-n|--native)
+        opts+=("$1")
         ;;
-      -d|--deps)
-        local opts+=("--deps")
-        ;;
-      -n|--native)
-        local opts+=("--native")
-        ;;
+      # We use -f instead of -m
       -f|--foreign)
-        local opts+=("--foreign")
+        opts+=("--foreign")
         ;;
       -h|--help)
         list::help
         exit
         ;;
-      -*)
-        echo "pac list: unrecognized option '$i'" 1>&2
-        exit 1
-        ;;
-      *)
-        local pkgs+=("$i")
+      --)
+        shift
+        break
         ;;
     esac
+    shift
   done
 
-  "$PACMAN" -Q "${opts[@]}" "${pkgs[@]}"
+  "$PACMAN" -Q "${opts[@]}" "$@"
 }
 
 main() {

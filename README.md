@@ -32,7 +32,7 @@ Command | Description
 `pac se foo` <br> `pac search foo` | Search package names and descriptions with keyword `foo`.
 `pac mark -d foo` <br> `pac mark --asdeps foo` | Mark package `foo` as dependencies.
 `pac arm` <br> `pac autoremove` | Remove dependencies that are no longer required by any installed package.
-`pac ls -e -f` <br> `pac list --explicit --foreign`| List explicitly installed foreign packages (e.g. AUR packages).
+`pac ls -ef` <br> `pac list --explicit --foreign`| List explicitly installed foreign packages (e.g. AUR packages).
 
 Run `pac --help` for more information.
 
