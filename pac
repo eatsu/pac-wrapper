@@ -422,11 +422,25 @@ info() {
     fi
 
     # Try querying the local database first, then the remote one
-    # Add newline to -g to match -i
-    ("$PACMAN" -Qi "${opts[@]}" "$pkg" 2> /dev/null) ||
-    ("$PACMAN" -Qg "$pkg" 2> /dev/null && echo) ||
-    ("$PACMAN" -Sg "$pkg" 2> /dev/null && echo) ||
-    ("$PACMAN" -Si "$pkg")
+    if "$PACMAN" -Qi "${opts[@]}" "$pkg" 2> /dev/null; then
+      :
+    # Support for groups
+    elif output="$("$PACMAN" -Sg "$pkg" 2> /dev/null)"; then
+      # Add [installed] label to each line of installed packages
+      readarray -t ist_pkgs < <("$PACMAN" -Qg "$pkg" 2> /dev/null)
+      for ist_pkg in "${ist_pkgs[@]}"; do
+        sed_opts+=(-e "s/^$ist_pkg$/$ist_pkg \x1b[1;36m[installed]\x1b[0m/")
+      done
+
+      # Have the dummy -e "" to not print sed's usage when sed_opts is empty
+      echo "$output" | sed -e "" "${sed_opts[@]}"
+
+      # Add newline to match -i
+      echo
+    # Keep -Si at the end to print its error message on failure
+    else
+      "$PACMAN" -Si "$pkg"
+    fi
 
     # Remove --file from opts
     if [[ -f "$pkg" ]]; then
