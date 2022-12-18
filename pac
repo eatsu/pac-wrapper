@@ -190,7 +190,7 @@ EOF
 }
 
 autoremove() {
-  local cmdname shortopts longopts args opts
+  local cmdname shortopts longopts args opts pkgs
   cmdname="pac autoremove"
   shortopts="nyh"
   longopts="nosave,yes,help"
@@ -394,7 +394,7 @@ EOF
 }
 
 info() {
-  local cmdname shortopts longopts args opts
+  local cmdname shortopts longopts args opts arg output ist_pkgs ist_pkg sed_opts
   cmdname="pac info"
   shortopts="h"
   longopts="help"
@@ -415,19 +415,19 @@ info() {
     esac
   done
 
-  for pkg; do
+  for arg; do
     # Allow package files as arguments
-    if [[ -f "$pkg" ]]; then
+    if [[ -f "$arg" ]]; then
       opts+=("--file")
     fi
 
     # Try querying the local database first, then the remote one
-    if "$PACMAN" -Qi "${opts[@]}" "$pkg" 2> /dev/null; then
+    if "$PACMAN" -Qi "${opts[@]}" "$arg" 2> /dev/null; then
       :
     # Support for groups
-    elif output="$("$PACMAN" -Sg "$pkg" 2> /dev/null)"; then
+    elif output="$("$PACMAN" -Sg "$arg" 2> /dev/null)"; then
       # Add [installed] label to each line of installed packages
-      readarray -t ist_pkgs < <("$PACMAN" -Qg "$pkg" 2> /dev/null)
+      readarray -t ist_pkgs < <("$PACMAN" -Qg "$arg" 2> /dev/null)
       for ist_pkg in "${ist_pkgs[@]}"; do
         sed_opts+=(-e "s/^$ist_pkg$/$ist_pkg \x1b[1;36m[installed]\x1b[0m/")
       done
@@ -439,11 +439,11 @@ info() {
       echo
     # Keep -Si at the end to print its error message on failure
     else
-      "$PACMAN" -Si "$pkg"
+      "$PACMAN" -Si "$arg"
     fi
 
     # Remove --file from opts
-    if [[ -f "$pkg" ]]; then
+    if [[ -f "$arg" ]]; then
       unset "opts[-1]"
     fi
   done
@@ -499,7 +499,7 @@ EOF
 }
 
 files() {
-  local cmdname shortopts longopts args opts
+  local cmdname shortopts longopts args opts arg
   cmdname="pac files"
   shortopts="h"
   longopts="help"
@@ -520,18 +520,18 @@ files() {
     esac
   done
 
-  for pkg; do
+  for arg; do
     # Allow package files as arguments
-    if [[ -f "$pkg" ]]; then
+    if [[ -f "$arg" ]]; then
       opts+=("--file")
     fi
 
     # Try querying the local database first, then the remote one
-    "$PACMAN" -Ql "${opts[@]}" "$pkg" 2> /dev/null ||
-    "$PACMAN" -Fl "$pkg"
+    "$PACMAN" -Ql "${opts[@]}" "$arg" 2> /dev/null ||
+    "$PACMAN" -Fl "$arg"
 
     # Remove --file from opts
-    if [[ -f "$pkg" ]]; then
+    if [[ -f "$arg" ]]; then
       unset "opts[-1]"
     fi
   done
