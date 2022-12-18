@@ -394,7 +394,7 @@ EOF
 }
 
 info() {
-  local cmdname shortopts longopts args opts arg output ist_pkgs ist_pkg sed_opts
+  local cmdname shortopts longopts args opts arg output ist_pkgs ist_pkg sed_opts ret
   cmdname="pac info"
   shortopts="h"
   longopts="help"
@@ -439,7 +439,7 @@ info() {
       echo
     # Keep -Si at the end to print its error message on failure
     else
-      "$PACMAN" -Si "$arg"
+      "$PACMAN" -Si "$arg" || ret=1
     fi
 
     # Remove --file from opts
@@ -447,6 +447,8 @@ info() {
       unset "opts[-1]"
     fi
   done
+
+  return "${ret:-0}"
 }
 
 owner::help() {
@@ -499,7 +501,7 @@ EOF
 }
 
 files() {
-  local cmdname shortopts longopts args opts arg
+  local cmdname shortopts longopts args opts arg ret
   cmdname="pac files"
   shortopts="h"
   longopts="help"
@@ -528,13 +530,15 @@ files() {
 
     # Try querying the local database first, then the remote one
     "$PACMAN" -Ql "${opts[@]}" "$arg" 2> /dev/null ||
-    "$PACMAN" -Fl "$arg"
+    "$PACMAN" -Fl "$arg" || ret=1
 
     # Remove --file from opts
     if [[ -f "$arg" ]]; then
       unset "opts[-1]"
     fi
   done
+
+  return "${ret:-0}"
 }
 
 mark::help() {
