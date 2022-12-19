@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ueo pipefail
 
-VERSION="3.0.0"
+VERSION="4.0.0"
 PACMAN="${PAC_PACMAN:-"pacman"}"
 
 if [[ "$PACMAN" == "pacman" ]] && (( EUID != 0 )); then
