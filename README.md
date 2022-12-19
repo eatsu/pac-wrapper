@@ -2,7 +2,7 @@
 
 [![AUR package](https://img.shields.io/badge/AUR-pac--wrapper-blue?logo=archlinux)](https://aur.archlinux.org/packages/pac-wrapper)
 
-Pac is a simple pacman wrapper that provides intuitive syntax similar to
+Pac is a pacman wrapper that provides intuitive syntax similar to
 `dnf`, `apt`, `zypper`, etc.
 
 With `pac` you don't need to memorize the non-intuitive options like

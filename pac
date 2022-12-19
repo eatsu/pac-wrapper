@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-#
-# A simple pacman wrapper that provides intuitive syntax similar to dnf, apt,
-# zypper, etc.
-#
 set -ueo pipefail
 
 VERSION="3.0.0"
@@ -16,8 +12,10 @@ fi
 
 help() {
   cat << EOF
+A pacman wrapper that provides intuitive syntax
+
 Usage:
-  pac <command> [option(s)] [...]
+  pac <command> [option(s)] [target(s)]
   pac [option]
 
 Commands:
