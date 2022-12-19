@@ -439,7 +439,10 @@ info() {
       echo
     # Keep -Si at the end to print its error message on failure
     else
-      "$PACMAN" -Si "$arg" || ret=1
+      "$PACMAN" -Si "$arg" || {
+        ret=1
+        echo
+      }
     fi
 
     # Remove --file from opts
