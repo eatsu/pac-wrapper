@@ -28,7 +28,7 @@ Command | Description
 `pac` | Upgrade installed packages.
 `pac in foo` <br> `pac install foo` | Install package `foo` and its dependencies.
 `pac rm foo` <br> `pac remove foo` | Remove package `foo` and its dependencies.
-`pac if foo` <br> `pac info foo` | Show information about package `foo` (whichever installed or not, or a package group or not).
+`pac if foo` <br> `pac info foo` | Show information about package or group `foo`.
 `pac se foo` <br> `pac search foo` | Search package names and descriptions with keyword `foo`.
 `pac mark -d foo` <br> `pac mark --asdeps foo` | Mark package `foo` as dependencies.
 `pac arm` <br> `pac autoremove` | Remove dependencies that are no longer required by any installed package.

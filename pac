@@ -27,9 +27,9 @@ Commands:
   clean                 Remove old packages from cache
   upgrade, up           Sync databases and upgrade installed packages
   search, se            Search package names and descriptions
-  info, if              Show package information
-  files                 Show package file list
-  owner                 Query packages that own the files
+  info, if              Show information about packages or groups
+  files                 List files owned by the specified packages
+  owner                 Query packages that own the specified files
   mark                  Mark packages as explicitly installed
   list, ls              List installed packages
 
@@ -380,7 +380,7 @@ search() {
 
 info::help() {
   cat << EOF
-Show package information
+Show information about packages or groups
 
 Usage:
   pac info <package(s)>
@@ -456,7 +456,7 @@ info() {
 
 owner::help() {
   cat << EOF
-Query packages that own the files
+Query packages that own the specified files
 
 Usage:
   pac owner <file(s)>
@@ -493,7 +493,7 @@ owner() {
 
 files::help() {
   cat << EOF
-Show package file list
+List files owned by the specified packages
 
 Usage:
   pac files <package(s)>
