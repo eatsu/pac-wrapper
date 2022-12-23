@@ -359,7 +359,7 @@ search() {
   while true; do
     case "$1" in
       -i|--installed)
-        operation="-Q"
+        operation="-Qs"
         shift
         ;;
       -h|--help)
@@ -373,7 +373,7 @@ search() {
     esac
   done
 
-  "$PACMAN" "${operation:-"-S"}" -s "$@"
+  "$PACMAN" "${operation:-"-Ss"}" "$@"
 }
 
 info::help() {
