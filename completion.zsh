@@ -156,6 +156,7 @@ _pac_clean_options=(
 
 _pac_search_options=(
   '(-i --installed)'{-i,--installed}'[Search only installed packages]'
+  '(-q --quiet)'{-q,--quiet}'[Show less information]'
   '*:search keyword'
 )
 

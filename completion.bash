@@ -36,7 +36,7 @@ _pac() {
       return
       ;;
     search|se)
-      COMPREPLY=($(compgen -W '-h --help -i --installed' -- "$cur"))
+      COMPREPLY=($(compgen -W '-h --help -i --installed -q --quiet' -- "$cur"))
       return
       ;;
     owner)

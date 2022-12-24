@@ -334,13 +334,14 @@ search::help() {
 Search package names and descriptions
 
 Usage:
-  pac search [option] <keyword(s)>
+  pac search [option(s)] <keyword(s)>
 
 Alias:
   se
 
 Options:
   -i, --installed       Search only installed packages
+  -q, --quiet           Show less information
 
 General option:
   -h, --help            Print help information
@@ -350,8 +351,8 @@ EOF
 search() {
   local cmdname shortopts longopts args operation
   cmdname="pac search"
-  shortopts="ih"
-  longopts="installed,help"
+  shortopts="iqh"
+  longopts="installed,quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
 
   eval set -- "$args"
@@ -360,6 +361,10 @@ search() {
     case "$1" in
       -i|--installed)
         operation="-Qs"
+        shift
+        ;;
+      -q|--quiet)
+        opts+=("$1")
         shift
         ;;
       -h|--help)
@@ -373,7 +378,7 @@ search() {
     esac
   done
 
-  "$PACMAN" "${operation:-"-Ss"}" "$@"
+  "$PACMAN" "${operation:-"-Ss"}" "${opts[@]}" "$@"
 }
 
 info::help() {
