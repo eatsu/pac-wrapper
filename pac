@@ -419,13 +419,13 @@ info() {
   done
 
   for arg; do
-    # Allow package files as arguments
+    # Allow files as arguments
     if [[ -f "$arg" ]]; then
-      opts+=("--file")
+      opt_file=("--file")
     fi
 
     # Try querying the local database first, then the remote one
-    if "$PACMAN" -Qi "${opts[@]}" "$arg" 2> /dev/null; then
+    if "$PACMAN" -Qi "${opt_file[@]}" "$arg" 2> /dev/null; then
       :
     # Support for groups
     elif output="$("$PACMAN" -Sg "$arg" 2> /dev/null)"; then
@@ -448,9 +448,9 @@ info() {
       }
     fi
 
-    # Remove --file from opts
+    # Unset opt_file for next arg
     if [[ -f "$arg" ]]; then
-      unset "opts[-1]"
+      unset opt_file
     fi
   done
 
@@ -536,18 +536,18 @@ files() {
   done
 
   for arg; do
-    # Allow package files as arguments
+    # Allow files as arguments
     if [[ -f "$arg" ]]; then
-      opts+=("--file")
+      opt_file=("--file")
     fi
 
     # Try querying the local database first, then the remote one
-    "$PACMAN" -Ql "${opts[@]}" "$arg" 2> /dev/null ||
+    "$PACMAN" -Ql "${opt_file[@]}" "$arg" 2> /dev/null ||
     "$PACMAN" -Fl "$arg" || ret=1
 
-    # Remove --file from opts
+    # Unset opt_file for next arg
     if [[ -f "$arg" ]]; then
-      unset "opts[-1]"
+      unset opt_file
     fi
   done
 
