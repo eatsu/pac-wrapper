@@ -44,6 +44,10 @@ _pac() {
       _filedir
       return
       ;;
+    files)
+      COMPREPLY=($(compgen -W '-h --help -q --quiet' -- "$cur"))
+      return
+      ;;
     mark)
       COMPREPLY=($(compgen -W '-h --help -d --asdeps' -- "$cur"))
       return

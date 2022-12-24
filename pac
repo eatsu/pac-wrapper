@@ -506,7 +506,10 @@ files::help() {
 List files owned by the specified packages
 
 Usage:
-  pac files <package(s)>
+  pac files [option(s)] <package(s)>
+
+Options:
+  -q, --quiet           Show less information
 
 General option:
   -h, --help            Print help information
@@ -516,14 +519,18 @@ EOF
 files() {
   local cmdname shortopts longopts args opts arg ret
   cmdname="pac files"
-  shortopts="h"
-  longopts="help"
+  shortopts="qh"
+  longopts="quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
 
   eval set -- "$args"
 
   while true; do
     case "$1" in
+      -q|--quiet)
+        opts+=("$1")
+        shift
+        ;;
       -h|--help)
         files::help
         exit
@@ -542,8 +549,8 @@ files() {
     fi
 
     # Try querying the local database first, then the remote one
-    "$PACMAN" -Ql "${opt_file[@]}" "$arg" 2> /dev/null ||
-    "$PACMAN" -Fl "$arg" || ret=1
+    "$PACMAN" -Ql "${opts[@]}" "${opt_file[@]}" "$arg" 2> /dev/null ||
+    "$PACMAN" -Fl "${opts[@]}" "$arg" || ret=1
 
     # Unset opt_file for next arg
     if [[ -f "$arg" ]]; then

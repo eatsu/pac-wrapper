@@ -170,6 +170,7 @@ _pac_owner_options=(
 )
 
 _pac_files_options=(
+  '(-q --quiet)'{-q,--quiet}'[Show less information]'
   '*: :_pac_all_packages'
 )
 
