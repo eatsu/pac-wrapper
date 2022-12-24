@@ -462,7 +462,10 @@ owner::help() {
 Query packages that own the specified files
 
 Usage:
-  pac owner <file(s)>
+  pac owner [option(s)] <file(s)>
+
+Options:
+  -q, --quiet           Show less information
 
 General option:
   -h, --help            Print help information
@@ -472,14 +475,18 @@ EOF
 owner() {
   local cmdname shortopts longopts args
   cmdname="pac owner"
-  shortopts="h"
-  longopts="help"
+  shortopts="qh"
+  longopts="quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
 
   eval set -- "$args"
 
   while true; do
     case "$1" in
+      -q|--quiet)
+        opts+=("$1")
+        shift
+        ;;
       -h|--help)
         owner::help
         exit
@@ -491,7 +498,7 @@ owner() {
     esac
   done
 
-  "$PACMAN" -Qo "$@"
+  "$PACMAN" -Qo "${opts[@]}" "$@"
 }
 
 files::help() {

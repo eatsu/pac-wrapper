@@ -165,6 +165,7 @@ _pac_info_options=(
 )
 
 _pac_owner_options=(
+  '(-q --quiet)'{-q,--quiet}'[Show less information]'
   '*: :_files'
 )
 

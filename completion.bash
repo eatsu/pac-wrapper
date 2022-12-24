@@ -40,7 +40,7 @@ _pac() {
       return
       ;;
     owner)
-      COMPREPLY=($(compgen -W '-h --help' -- "$cur"))
+      COMPREPLY=($(compgen -W '-h --help -q --quiet' -- "$cur"))
       _filedir
       return
       ;;
