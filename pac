@@ -620,6 +620,7 @@ Options:
   -d, --deps            List packages installed as dependencies
   -n, --native          List installed packages found in sync db(s)
   -f, --foreign         List installed packages not found in sync db(s)
+  -q, --quiet           Show less information
 
 General option:
   -h, --help            Print help information
@@ -629,15 +630,15 @@ EOF
 list() {
   local cmdname shortopts longopts args opts
   cmdname="pac list"
-  shortopts="ednfh"
-  longopts="explicit,deps,native,foreign,help"
+  shortopts="ednfqh"
+  longopts="explicit,deps,native,foreign,quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
 
   eval set -- "$args"
 
   while true; do
     case "$1" in
-      -e|--explicit|-d|--deps|-n|--native)
+      -e|--explicit|-d|--deps|-n|--native|-q|--quiet)
         opts+=("$1")
         shift
         ;;

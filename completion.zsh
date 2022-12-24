@@ -184,6 +184,7 @@ _pac_list_options=(
   '(-d --deps -e --explicit)'{-e,--explicit}'[List packages explicitly installed]'
   '(-f --foreign -n --native)'{-f,--foreign}'[List installed packages not found in sync db(s)]'
   '(-f --foreign -n --native)'{-n,--native}'[List installed packages found in sync db(s)]'
+  '(-q --quiet)'{-q,--quiet}'[Show less information]'
   '*: :_pac_installed_packages'
 )
 

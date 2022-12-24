@@ -54,7 +54,7 @@ _pac() {
       ;;
     list|ls)
       COMPREPLY=($(compgen -W '-h --help -e --explicit -d --deps -n --native
-        -f --foreign' -- "$cur"))
+        -f --foreign -q --quiet' -- "$cur"))
       return
       ;;
     *)
