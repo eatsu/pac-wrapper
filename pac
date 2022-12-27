@@ -447,8 +447,8 @@ info() {
         sed_opts+=(-e "s/^$ist_pkg$/$ist_pkg \x1b[1;36m[installed]\x1b[0m/")
       done
 
-      # Have the dummy -e "" to not print sed's usage when sed_opts is empty
-      echo "$output" | sed -e "" "${sed_opts[@]}"
+      # Make the group name bold
+      echo "$output" | sed "${sed_opts[@]}" -e "s/$arg/\x1b[1m$arg\x1b[0m/"
 
       # Add newline to match -i
       echo
