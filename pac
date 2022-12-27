@@ -386,10 +386,14 @@ info::help() {
 Show information about packages or groups
 
 Usage:
-  pac info <package(s)>
+  pac info [option(s)] <package(s)>
 
 Alias:
   if
+
+Options:
+  -e, --extended        Show extended information for packages
+  -q, --quiet           Show less information for groups
 
 General option:
   -h, --help            Print help information
@@ -397,16 +401,24 @@ EOF
 }
 
 info() {
-  local cmdname shortopts longopts args opts arg output ist_pkgs ist_pkg sed_opts ret
+  local cmdname shortopts longopts args pkg_opts grp_opts arg output ist_pkgs ist_pkg sed_opts ret
   cmdname="pac info"
-  shortopts="h"
-  longopts="help"
+  shortopts="eqh"
+  longopts="extended,quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
 
   eval set -- "$args"
 
   while true; do
     case "$1" in
+      -e|--extended)
+        pkg_opts+=("--info")
+        shift
+        ;;
+      -q|--quiet)
+        grp_opts+=("$1")
+        shift
+        ;;
       -h|--help)
         info::help
         exit
@@ -425,10 +437,10 @@ info() {
     fi
 
     # Try querying the local database first, then the remote one
-    if "$PACMAN" -Qi "${opt_file[@]}" "$arg" 2> /dev/null; then
+    if "$PACMAN" -Qi "${pkg_opts[@]}" "${opt_file[@]}" "$arg" 2> /dev/null; then
       :
     # Support for groups
-    elif output="$("$PACMAN" -Sg "$arg" 2> /dev/null)"; then
+    elif output="$("$PACMAN" -Sg "${grp_opts[@]}" "$arg" 2> /dev/null)"; then
       # Add [installed] label to each line of installed packages
       readarray -t ist_pkgs < <("$PACMAN" -Qg "$arg" 2> /dev/null)
       for ist_pkg in "${ist_pkgs[@]}"; do
@@ -442,7 +454,7 @@ info() {
       echo
     # Keep -Si at the end to print its error message on failure
     else
-      "$PACMAN" -Si "$arg" || {
+      "$PACMAN" -Si "${pkg_opts[@]}" "$arg" || {
         ret=1
         echo
       }

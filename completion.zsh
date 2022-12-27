@@ -161,6 +161,8 @@ _pac_search_options=(
 )
 
 _pac_info_options=(
+  '(-e --extended)'{-e,--extended}'[Show extended information for packages]'
+  '(-q --quiet)'{-q,--quiet}'[Show less information for groups]'
   '*: :_pac_all_packages_and_groups'
 )
 

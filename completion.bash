@@ -39,6 +39,10 @@ _pac() {
       COMPREPLY=($(compgen -W '-h --help -i --installed -q --quiet' -- "$cur"))
       return
       ;;
+    info|if)
+      COMPREPLY=($(compgen -W '-h --help -e --extended -q --quiet' -- "$cur"))
+      return
+      ;;
     owner)
       COMPREPLY=($(compgen -W '-h --help -q --quiet' -- "$cur"))
       _filedir
@@ -55,10 +59,6 @@ _pac() {
     list|ls)
       COMPREPLY=($(compgen -W '-h --help -e --explicit -d --deps -n --native
         -f --foreign -q --quiet' -- "$cur"))
-      return
-      ;;
-    *)
-      COMPREPLY=($(compgen -W '-h --help' -- "$cur"))
       return
       ;;
   esac
