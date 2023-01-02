@@ -448,7 +448,7 @@ info() {
       done
 
       # Make the group name bold
-      echo "$output" | sed "${sed_opts[@]}" -e "s/$arg/\x1b[1m$arg\x1b[0m/"
+      echo "$output" | sed "${sed_opts[@]}" -e "s/$arg /\x1b[1m$arg\x1b[0m /"
 
       # Add newline to match -i
       echo
